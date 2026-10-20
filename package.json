@@ -1,0 +1,50 @@
+{
+  "name": "rjl-rain",
+  "version": "1.0.0",
+  "description": "Matrix digital rain in one file: a canvas, zero dependencies, pointer glow, click ripples and a hidden word the drops spell out. Born in RJL OS (rjl.sh).",
+  "main": "rjl-rain.js",
+  "unpkg": "rjl-rain.min.js",
+  "jsdelivr": "rjl-rain.min.js",
+  "files": [
+    "rjl-rain.js",
+    "rjl-rain.min.js",
+    "LICENSE",
+    "README.md"
+  ],
+  "scripts": {
+    "build": "node scripts/build.js",
+    "svg": "node scripts/render-svg.js",
+    "serve": "node scripts/serve.js",
+    "pretest": "node scripts/check-test-target.js",
+    "test": "npm run test:unit && npm run test:e2e",
+    "test:unit": "vitest run",
+    "test:e2e": "playwright test"
+  },
+  "keywords": [
+    "matrix",
+    "matrix-rain",
+    "digital-rain",
+    "canvas",
+    "animation",
+    "background",
+    "zero-dependency"
+  ],
+  "author": "RJ Lindelof (https://rjl.dev)",
+  "license": "MIT",
+  "homepage": "https://github.com/rjlsoftware/rjl-rain#readme",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/rjlsoftware/rjl-rain.git"
+  },
+  "bugs": {
+    "url": "https://github.com/rjlsoftware/rjl-rain/issues"
+  },
+  "devDependencies": {
+    "@playwright/test": "^1.64.1",
+    "terser": "^5.51.2",
+    "vitest": "^5.0.5"
+  },
+  "engines": {
+    "node": ">=22.12.0"
+  }
+}

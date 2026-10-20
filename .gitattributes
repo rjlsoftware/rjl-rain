@@ -1,0 +1,7 @@
+# Git stores LF; eol=lf makes the working tree LF too, whatever core.autocrlf says, so a
+# Windows checkout builds byte-identical files to CI.
+* text=auto eol=lf
+
+*.png binary
+*.ico binary
+*.gif binary

@@ -1,0 +1,55 @@
+# Rebuild the generated files (the minified script and the README banner) and fail on any
+# diff, then run the unit and browser suites.
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  test:
+    name: Build and test
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7
+
+      - name: Set up Node
+        uses: actions/setup-node@v7
+        with:
+          node-version: 24
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Generated files are current
+        run: |
+          npm run build
+          git diff --exit-code -- rjl-rain.min.js assets/rain.svg
+
+      - name: Install Chromium
+        run: npx playwright install --with-deps chromium
+
+      - name: Unit + browser tests
+        run: npm test
+
+      - name: Upload Playwright traces
+        if: failure()
+        uses: actions/upload-artifact@v7
+        with:
+          name: playwright-results
+          path: test-results/
+          retention-days: 7
+          if-no-files-found: ignore

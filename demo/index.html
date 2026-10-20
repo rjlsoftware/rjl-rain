@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>rjl-rain demo</title>
+  <style>
+    html { background: #000; color-scheme: dark; }
+    body { margin: 0; min-height: 100vh; font: 14px/1.5 ui-monospace, Menlo, Consolas, monospace; color: #B6FFB6; }
+    .panel {
+      position: fixed; left: 16px; bottom: 16px; max-width: calc(100vw - 32px); box-sizing: border-box;
+      padding: 12px 14px; background: rgba(0, 0, 0, 0.78); border: 1px solid #0a3; border-radius: 6px;
+    }
+    .panel h1 { margin: 0 0 4px; font-size: 16px; color: #0f0; }
+    .panel p { margin: 0 0 10px; color: #7c7; }
+    .row { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 6px; }
+    button, input {
+      font: inherit; color: #B6FFB6; background: #031; border: 1px solid #0a3; border-radius: 4px; padding: 4px 10px;
+    }
+    button { cursor: pointer; white-space: nowrap; }
+    button:hover, button:focus-visible { background: #052; outline: none; }
+    input { width: 9em; }
+    a { color: #0f0; }
+  </style>
+</head>
+<body>
+  <div class="panel">
+    <h1>rjl-rain</h1>
+    <p>Move the pointer through the rain. Click to send a ripple. <a href="https://github.com/rjlsoftware/rjl-rain">Source</a></p>
+    <div class="row" aria-label="Glyphs">
+      <button type="button" data-chars="classic">Classic</button>
+      <button type="button" data-chars="rjl">RJL OS</button>
+      <button type="button" data-chars="binary">Binary</button>
+      <button type="button" data-chars="hex">Hex</button>
+    </div>
+    <div class="row" aria-label="Colors">
+      <button type="button" data-color="#00FF00" data-bright="#B6FFB6">Green</button>
+      <button type="button" data-color="#FFB000" data-bright="#FFE2A8">Amber</button>
+      <button type="button" data-color="#9BD4FF" data-bright="#FFFFFF">Ice</button>
+      <button type="button" data-color="#FF3B30" data-bright="#FFB3AE">Red</button>
+    </div>
+    <form class="row" id="spell">
+      <input id="word" value="RJL" maxlength="12" aria-label="Word to spell">
+      <button type="submit">Spell it</button>
+      <button type="button" id="pause">Pause</button>
+    </form>
+  </div>
+
+  <script>
+    // ?min=1 loads the minified build instead of the readable source.
+    var params = new URLSearchParams(location.search);
+    var s = document.createElement('script');
+    s.src = params.has('min') ? '../rjl-rain.min.js' : '../rjl-rain.js';
+    s.onload = function () {
+      var rain = window.rain = RJLRain();
+      document.querySelectorAll('[data-chars]').forEach(function (b) {
+        b.addEventListener('click', function () { rain.set({ chars: RJLRain.glyphs[b.dataset.chars] }); });
+      });
+      document.querySelectorAll('[data-color]').forEach(function (b) {
+        b.addEventListener('click', function () { rain.set({ color: b.dataset.color, bright: b.dataset.bright }); });
+      });
+      document.getElementById('spell').addEventListener('submit', function (e) {
+        e.preventDefault();
+        rain.form(document.getElementById('word').value);
+      });
+      var pause = document.getElementById('pause');
+      pause.addEventListener('click', function () {
+        if (rain.running) { rain.pause(); pause.textContent = 'Resume'; } else { rain.resume(); pause.textContent = 'Pause'; }
+      });
+    };
+    document.head.appendChild(s);
+  </script>
+</body>
+</html>
