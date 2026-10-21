@@ -1,5 +1,6 @@
 // rjl-rain in a real browser (Chromium), driven through the demo page.
 const { test, expect } = require('@playwright/test');
+const { version } = require('../package.json');
 
 // How many pixels of the first canvas carry the rain color (green channel well above red).
 function litPixels(page) {
@@ -34,7 +35,7 @@ test('the demo rains, behind the page, on a full-viewport canvas', async ({ page
 
 test('the minified build is the same library', async ({ page }) => {
     const errors = await open(page, '?min=1');
-    expect(await page.evaluate(() => [RJLRain.version, document.querySelector('script[src$="rjl-rain.min.js"]') !== null])).toEqual(['1.0.0', true]);
+    expect(await page.evaluate(() => [RJLRain.version, document.querySelector('script[src$="rjl-rain.min.js"]') !== null])).toEqual([version, true]);
     await expect.poll(() => litPixels(page)).toBeGreaterThan(200);
     expect(errors).toEqual([]);
 });

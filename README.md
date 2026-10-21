@@ -1,6 +1,7 @@
 <a href="https://rjl.sh/"><img src="assets/rain.svg" alt="Green Matrix rain falling across a black banner while the drops spell out RJL" width="100%"></a>
 
 <p align="center">
+  <a href="https://www.npmjs.com/package/rjl-rain"><img src="https://img.shields.io/npm/v/rjl-rain?color=00a000" alt="npm version"></a>
   <a href="https://github.com/rjlsoftware/rjl-rain/blob/main/LICENSE"><img src="https://img.shields.io/badge/license-MIT-00a000" alt="License: MIT"></a>
   <img src="https://img.shields.io/badge/dependencies-0-00a000" alt="Zero dependencies">
   <img src="https://img.shields.io/badge/gzipped-3.2_KB-00a000" alt="3.2 KB gzipped">
@@ -33,20 +34,21 @@ See it live at **[rjl.sh](https://rjl.sh)** - move the mouse, click, and wait fo
 Full-screen rain behind your page, from a CDN:
 
 ```html
-<script src="https://cdn.jsdelivr.net/gh/rjlsoftware/rjl-rain@v1.0.0/rjl-rain.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/rjl-rain@1.0.1/rjl-rain.min.js"></script>
 <script>RJLRain();</script>
 ```
 
 That is the whole install. `RJLRain()` with no target creates a fixed, full-viewport canvas behind
-everything else on the page (it waits for `<body>` if you call it from `<head>`).
+everything else on the page (it waits for `<body>` if you call it from `<head>`). The same file is
+on unpkg too: `https://unpkg.com/rjl-rain@1.0.1/rjl-rain.min.js`.
 
 **Self-hosted:** copy `rjl-rain.min.js` (or the readable `rjl-rain.js`) from this repository and
 point the `<script>` at your copy.
 
-**npm, straight from GitHub:**
+**npm:**
 
 ```bash
-npm install github:rjlsoftware/rjl-rain#v1.0.0
+npm install rjl-rain
 ```
 
 ```js

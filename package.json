@@ -1,6 +1,6 @@
 {
   "name": "rjl-rain",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Matrix digital rain in one file: a canvas, zero dependencies, pointer glow, click ripples and a hidden word the drops spell out. Born in RJL OS (rjl.sh).",
   "main": "rjl-rain.js",
   "unpkg": "rjl-rain.min.js",

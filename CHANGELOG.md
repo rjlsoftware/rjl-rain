@@ -2,6 +2,11 @@
 
 All notable changes to rjl-rain. Version format: Major.Medium.Minor.
 
+## [1.0.1] - 10-20-2026 at 7:18pm
+
+### Changed
+- Published to the npm registry: `npm install rjl-rain`. The README's quick start now uses the npm package and its CDN links (jsDelivr and unpkg), and gains an npm version badge. No code changes.
+
 ## [1.0.0] - 10-20-2026 at 6:38pm
 
 ### Added
