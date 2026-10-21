@@ -2,10 +2,18 @@
 
 All notable changes to rjl-rain. Version format: Major.Medium.Minor.
 
+## [1.0.2] - 10-20-2026 at 7:36pm
+
+### Added
+- A release workflow (`.github/workflows/release.yml`). Pushing a `vX.Y.Z` tag checks the tag against the version and the changelog, rebuilds and tests, creates the GitHub release from this changelog with `rjl-rain.js` and `rjl-rain.min.js` attached, and publishes to npm with provenance through trusted publishing, so no npm token is stored anywhere. A version already on npm is skipped, so a re-run is safe. The README's new Releasing section has the steps.
+
+### Changed
+- The README quick start loads the script from jsDelivr's GitHub path again, which serves it straight from the release tag, and the npm section also shows the install straight from GitHub. The self-hosted note points at the files attached to each release. No behavior changes.
+
 ## [1.0.1] - 10-20-2026 at 7:18pm
 
 ### Changed
-- Published to the npm registry: `npm install rjl-rain`. The README's quick start now uses the npm package and its CDN links (jsDelivr and unpkg), and gains an npm version badge. No code changes.
+- Packaged for the npm registry (`npm install rjl-rain`), but never published there: npm refused the publish under a temporary account hold. The README's quick start used the npm package and its CDN links (jsDelivr and unpkg), and gained an npm version badge. No code changes.
 
 ## [1.0.0] - 10-20-2026 at 6:38pm
 

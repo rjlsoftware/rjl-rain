@@ -1,0 +1,116 @@
+# Release on a vX.Y.Z tag: check the tag against package.json and CHANGELOG.md, rebuild and test,
+# then create the GitHub release (changelog entry + both script files) and publish to npm.
+#
+# npm publishes through trusted publishing (OIDC), so no token is stored here. One-time setup on
+# npmjs.com: rjl-rain > Settings > Trusted Publisher > GitHub Actions, owner rjlsoftware,
+# repository rjl-rain, workflow release.yml. npm allows that only once the package exists, so the
+# first version is published from the command line. A version already on npm is skipped, so
+# "Re-run failed jobs" is always safe.
+name: Release
+
+on:
+  push:
+    tags: ['v*']
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: release-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  test:
+    name: Build and test
+    if: startsWith(github.ref, 'refs/tags/v')
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7
+
+      - name: Set up Node
+        uses: actions/setup-node@v7
+        with:
+          node-version: 24
+          cache: npm
+
+      - name: Tag matches the version and the changelog
+        run: |
+          version=$(node -p "require('./package.json').version")
+          if [ "$GITHUB_REF_NAME" != "v$version" ]; then
+            echo "::error::Tag $GITHUB_REF_NAME does not match package.json version $version"
+            exit 1
+          fi
+          if ! grep -q "^## \[$version\]" CHANGELOG.md; then
+            echo "::error::CHANGELOG.md has no entry for $version"
+            exit 1
+          fi
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Generated files are current
+        run: |
+          npm run build
+          git diff --exit-code -- rjl-rain.min.js assets/rain.svg
+
+      - name: Install Chromium
+        run: npx playwright install --with-deps chromium
+
+      - name: Unit + browser tests
+        run: npm test
+
+  github:
+    name: GitHub release
+    needs: test
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    permissions:
+      contents: write
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7
+
+      - name: Create or update the release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          version="${GITHUB_REF_NAME#v}"
+          awk -v head="## [$version]" 'index($0, head) == 1 { on = 1; next } /^## / { if (on) exit } on' CHANGELOG.md > notes.md
+          printf '\n```html\n<script src="https://cdn.jsdelivr.net/gh/rjlsoftware/rjl-rain@%s/rjl-rain.min.js"></script>\n<script>RJLRain();</script>\n```\n' "$GITHUB_REF_NAME" >> notes.md
+          if gh release view "$GITHUB_REF_NAME" > /dev/null 2>&1; then
+            gh release edit "$GITHUB_REF_NAME" --title "rjl-rain $version" --notes-file notes.md
+            gh release upload "$GITHUB_REF_NAME" rjl-rain.js rjl-rain.min.js --clobber
+          else
+            gh release create "$GITHUB_REF_NAME" rjl-rain.js rjl-rain.min.js --verify-tag --title "rjl-rain $version" --notes-file notes.md
+          fi
+
+  npm:
+    name: npm publish
+    needs: test
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    permissions:
+      contents: read
+      id-token: write
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7
+
+      - name: Set up Node
+        uses: actions/setup-node@v7
+        with:
+          node-version: 24
+          registry-url: https://registry.npmjs.org
+
+      - name: Publish unless this version is already on npm
+        run: |
+          version=$(node -p "require('./package.json').version")
+          if npm view "rjl-rain@$version" version > /dev/null 2>&1; then
+            echo "rjl-rain@$version is already on npm - nothing to publish."
+            exit 0
+          fi
+          echo "npm $(npm -v)"
+          npm publish --provenance --access public

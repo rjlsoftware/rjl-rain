@@ -34,21 +34,25 @@ See it live at **[rjl.sh](https://rjl.sh)** - move the mouse, click, and wait fo
 Full-screen rain behind your page, from a CDN:
 
 ```html
-<script src="https://cdn.jsdelivr.net/npm/rjl-rain@1.0.1/rjl-rain.min.js"></script>
+<script src="https://cdn.jsdelivr.net/gh/rjlsoftware/rjl-rain@v1.0.2/rjl-rain.min.js"></script>
 <script>RJLRain();</script>
 ```
 
 That is the whole install. `RJLRain()` with no target creates a fixed, full-viewport canvas behind
-everything else on the page (it waits for `<body>` if you call it from `<head>`). The same file is
-on unpkg too: `https://unpkg.com/rjl-rain@1.0.1/rjl-rain.min.js`.
+everything else on the page (it waits for `<body>` if you call it from `<head>`). jsDelivr serves the
+file straight from the release tag. The npm package is on unpkg too:
+`https://unpkg.com/rjl-rain@1.0.2/rjl-rain.min.js`.
 
-**Self-hosted:** copy `rjl-rain.min.js` (or the readable `rjl-rain.js`) from this repository and
-point the `<script>` at your copy.
+**Self-hosted:** copy `rjl-rain.min.js` (or the readable `rjl-rain.js`) from this repository or from
+the files attached to each [release](https://github.com/rjlsoftware/rjl-rain/releases), and point
+the `<script>` at your copy.
 
 **npm:**
 
 ```bash
 npm install rjl-rain
+# or straight from GitHub:
+npm install github:rjlsoftware/rjl-rain#v1.0.2
 ```
 
 ```js
@@ -147,6 +151,15 @@ npm run serve     # the demo, at the URL it prints
 
 `rjl-rain.js` is the source. The minified file and the banner are generated and committed (the CDN
 serves the minified file straight from a tag), and CI fails if they are out of date.
+
+### Releasing
+
+Bump the version (`npm version X.Y.Z --no-git-tag-version`, then the banner and `VERSION` in
+`rjl-rain.js`), add a `CHANGELOG.md` entry, run `npm run build` and `npm test`, commit, then push a
+`vX.Y.Z` tag. The tag runs `.github/workflows/release.yml`, which checks the tag against the version
+and the changelog, rebuilds and tests, creates the GitHub release from the changelog entry with both
+script files attached, and publishes to npm with provenance through trusted publishing - no npm
+token is stored anywhere.
 
 ## License
 
