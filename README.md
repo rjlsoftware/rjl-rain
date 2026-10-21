@@ -14,6 +14,10 @@
 **Matrix digital rain in one file.** Drop it on a page and the page rains: a canvas, zero
 dependencies, 3.2 KB gzipped.
 
+<p align="center">
+  <a href="https://rjl.sh/"><img src="assets/hero.png" alt="A browser window full of green Matrix rain that pours over its edge onto a mirror-black floor, while a pointer sends a ripple through the drops and bright ones spell RJL" width="100%"></a>
+</p>
+
 It started life as the background of [RJL OS](https://rjl.sh), a fake operating system on a
 single web page, and it keeps everything that made it fun there:
 
@@ -26,6 +30,10 @@ single web page, and it keeps everything that made it fun there:
   pointer, so the page under it works as normal.
 - **Cheap.** One `requestAnimationFrame` loop at a deliberate 20 fps retro cadence, no allocations
   per frame, nothing at all in a hidden tab. Crisp on high-DPI screens.
+
+<p align="center">
+  <img src="assets/touch.png" alt="A fingertip touching a curtain of falling green glyphs, the rain flaring bright and rippling outward around it" width="80%">
+</p>
 
 See it live at **[rjl.sh](https://rjl.sh)** - move the mouse, click, and wait for the word.
 
@@ -78,7 +86,12 @@ It follows the canvas's size as the layout changes, so a responsive canvas just 
 
 ## Options
 
-Every option is optional.
+<p align="center">
+  <img src="assets/themes.png" alt="A phone, a laptop and a monitor on a desk at night, raining green, amber and blue behind their web pages" width="100%">
+</p>
+
+Any palette, any glyphs, any word, and every option can change live with `rain.set()`. Every
+option is optional.
 
 | Option | Default | What it does |
 |---|---|---|
@@ -164,3 +177,8 @@ token is stored anywhere.
 ## License
 
 [MIT](LICENSE) (c) 2026 RJ Lindelof. Born in [RJL OS](https://rjl.sh). More at [rjl.dev](https://rjl.dev).
+
+The MIT license only asks that copies of the code keep its copyright and license notice: the
+[LICENSE](LICENSE) file, and the comment at the top of the script, which the minified build keeps.
+Credit on your page is not required, but when someone asks "how did you do that?", a link to
+[rjl-rain on GitHub](https://github.com/rjlsoftware/rjl-rain) is always appreciated.

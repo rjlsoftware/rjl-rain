@@ -2,9 +2,11 @@
 
 All notable changes to rjl-rain. Version format: Major.Medium.Minor.
 
-## [1.0.2] - 10-20-2026 at 7:36pm
+## [1.0.2] - 10-20-2026 at 7:49pm
 
 ### Added
+- README artwork: a hero image that is also the repository's social preview (`.github/social-preview.png`, 1280x640), a touch-the-rain illustration and a three-screen color-themes scene, all in `assets/`. The full-size originals are kept in `resources/`. None of them ship in the npm package.
+- A License note: the MIT license only asks that copies keep the copyright and license notice, credit on the page is not required, and a link back to the repository is appreciated.
 - A release workflow (`.github/workflows/release.yml`). Pushing a `vX.Y.Z` tag checks the tag against the version and the changelog, rebuilds and tests, creates the GitHub release from this changelog with `rjl-rain.js` and `rjl-rain.min.js` attached, and publishes to npm with provenance through trusted publishing, so no npm token is stored anywhere. A version already on npm is skipped, so a re-run is safe. The README's new Releasing section has the steps.
 
 ### Changed
