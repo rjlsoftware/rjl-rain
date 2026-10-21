@@ -37,12 +37,12 @@ jobs:
       - name: Generated files are current
         run: |
           npm run build
-          git diff --exit-code -- rjl-rain.min.js assets/rain.svg
+          git diff --exit-code -- rjl-rain.min.js rjl-rain.mjs rjl-rain.min.mjs rjl-rain.d.mts assets/rain.svg README.md
 
       - name: Install Chromium
         run: npx playwright install --with-deps chromium
 
-      - name: Unit + browser tests
+      - name: Unit, type and browser tests
         run: npm test
 
       - name: Upload Playwright traces

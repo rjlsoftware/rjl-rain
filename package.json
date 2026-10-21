@@ -1,13 +1,38 @@
 {
   "name": "rjl-rain",
-  "version": "1.0.2",
+  "version": "1.1.0",
   "description": "Matrix digital rain in one file: a canvas, zero dependencies, pointer glow, click ripples and a hidden word the drops spell out. Born in RJL OS (rjl.sh).",
   "main": "rjl-rain.js",
+  "module": "rjl-rain.mjs",
+  "types": "rjl-rain.d.ts",
   "unpkg": "rjl-rain.min.js",
   "jsdelivr": "rjl-rain.min.js",
+  "exports": {
+    ".": {
+      "import": {
+        "types": "./rjl-rain.d.mts",
+        "default": "./rjl-rain.mjs"
+      },
+      "require": {
+        "types": "./rjl-rain.d.ts",
+        "default": "./rjl-rain.js"
+      }
+    },
+    "./min": {
+      "import": "./rjl-rain.min.mjs",
+      "require": "./rjl-rain.min.js"
+    },
+    "./package.json": "./package.json",
+    "./*": "./*"
+  },
+  "sideEffects": true,
   "files": [
     "rjl-rain.js",
     "rjl-rain.min.js",
+    "rjl-rain.mjs",
+    "rjl-rain.min.mjs",
+    "rjl-rain.d.ts",
+    "rjl-rain.d.mts",
     "LICENSE",
     "README.md"
   ],
@@ -16,8 +41,9 @@
     "svg": "node scripts/render-svg.js",
     "serve": "node scripts/serve.js",
     "pretest": "node scripts/check-test-target.js",
-    "test": "npm run test:unit && npm run test:e2e",
+    "test": "npm run test:unit && npm run test:types && npm run test:e2e",
     "test:unit": "vitest run",
+    "test:types": "tsc -p tests/types",
     "test:e2e": "playwright test"
   },
   "keywords": [
@@ -27,6 +53,8 @@
     "canvas",
     "animation",
     "background",
+    "web-component",
+    "typescript",
     "zero-dependency"
   ],
   "author": "RJ Lindelof (https://rjl.dev)",
@@ -42,6 +70,7 @@
   "devDependencies": {
     "@playwright/test": "^1.64.1",
     "terser": "^5.51.2",
+    "typescript": "^7.0.2",
     "vitest": "^5.0.5"
   },
   "engines": {

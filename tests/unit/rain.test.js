@@ -2,6 +2,8 @@
 // defaults. (rjl-rain.js is a UMD file, so Node loads it with require.)
 import { describe, it, expect } from 'vitest';
 import { createRequire } from 'node:module';
+import { readFileSync } from 'node:fs';
+import { createHash } from 'node:crypto';
 
 const require = createRequire(import.meta.url);
 const RJLRain = require('../../rjl-rain.js');
@@ -46,5 +48,32 @@ describe('presets and defaults', () => {
 
   it('says plainly that it needs a browser', () => {
     expect(() => RJLRain()).toThrow(/needs a browser/);
+  });
+
+  it('keeps the 1.0 look unless the 1.1 options are asked for', () => {
+    const d = RJLRain.defaults;
+    expect([d.head, d.speed, d.speedVariance, d.wordPosition, d.onWord, d.controls, d.background])
+      .toEqual(['', 1, 0, 'random', null, false, '#000000']);
+    expect(d.pauseOffscreen).toBe(true);
+    expect(typeof RJLRain.auto).toBe('function');
+  });
+});
+
+describe('builds', () => {
+  it('ships an ES module build of the same library', async () => {
+    const esm = (await import('../../rjl-rain.mjs')).default;
+    expect(esm.version).toBe(pkg.version);
+    expect(Object.keys(esm.defaults)).toEqual(Object.keys(RJLRain.defaults));
+    expect(esm.wordShape('RJL')).toEqual(RJLRain.wordShape('RJL'));
+  });
+
+  it('pins the README CDN snippet to this version and the SRI hash of rjl-rain.min.js', () => {
+    const readme = readFileSync(new URL('../../README.md', import.meta.url), 'utf8');
+    const min = readFileSync(new URL('../../rjl-rain.min.js', import.meta.url));
+    const sri = 'sha384-' + createHash('sha384').update(min).digest('base64');
+    expect(readme).toContain(`rjl-rain@v${pkg.version}/rjl-rain.min.js" integrity="${sri}" crossorigin="anonymous"`);
+    const versions = readme.match(/rjl-rain[@#]v?\d+\.\d+\.\d+/g) || [];
+    expect(versions.length).toBeGreaterThan(2);
+    expect(versions.every((v) => v.endsWith(pkg.version))).toBe(true);
   });
 });

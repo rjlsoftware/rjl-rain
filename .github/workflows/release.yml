@@ -1,11 +1,14 @@
 # Release on a vX.Y.Z tag: check the tag against package.json and CHANGELOG.md, rebuild and test,
-# then create the GitHub release (changelog entry + both script files) and publish to npm.
+# then create the GitHub release (changelog entry, SRI snippet, the builds attached), publish the
+# playground to GitHub Pages, and publish to npm.
 #
 # npm publishes through trusted publishing (OIDC), so no token is stored here. One-time setup on
 # npmjs.com: rjl-rain > Settings > Trusted Publisher > GitHub Actions, owner rjlsoftware,
 # repository rjl-rain, workflow release.yml. npm allows that only once the package exists, so the
-# first version is published from the command line. A version already on npm is skipped, so
-# "Re-run failed jobs" is always safe.
+# first version is published from the command line. A version already on npm, or older than the
+# one npm has, is skipped, so "Re-run failed jobs" is always safe.
+#
+# Pages: the github-pages environment needs a deployment policy that allows v* tags.
 name: Release
 
 on:
@@ -54,12 +57,12 @@ jobs:
       - name: Generated files are current
         run: |
           npm run build
-          git diff --exit-code -- rjl-rain.min.js assets/rain.svg
+          git diff --exit-code -- rjl-rain.min.js rjl-rain.mjs rjl-rain.min.mjs rjl-rain.d.mts assets/rain.svg README.md
 
       - name: Install Chromium
         run: npx playwright install --with-deps chromium
 
-      - name: Unit + browser tests
+      - name: Unit, type and browser tests
         run: npm test
 
   github:
@@ -78,14 +81,52 @@ jobs:
           GH_TOKEN: ${{ github.token }}
         run: |
           version="${GITHUB_REF_NAME#v}"
+          sri="sha384-$(openssl dgst -sha384 -binary rjl-rain.min.js | openssl base64 -A)"
           awk -v head="## [$version]" 'index($0, head) == 1 { on = 1; next } /^## / { if (on) exit } on' CHANGELOG.md > notes.md
-          printf '\n```html\n<script src="https://cdn.jsdelivr.net/gh/rjlsoftware/rjl-rain@%s/rjl-rain.min.js"></script>\n<script>RJLRain();</script>\n```\n' "$GITHUB_REF_NAME" >> notes.md
+          printf '\n```html\n<script src="https://cdn.jsdelivr.net/gh/rjlsoftware/rjl-rain@%s/rjl-rain.min.js" integrity="%s" crossorigin="anonymous"></script>\n<script>RJLRain();</script>\n```\n' "$GITHUB_REF_NAME" "$sri" >> notes.md
+          printf '\nTry every option in the [playground](https://rjlsoftware.github.io/rjl-rain/playground/).\n' >> notes.md
+          files="rjl-rain.js rjl-rain.min.js rjl-rain.mjs rjl-rain.min.mjs rjl-rain.d.ts rjl-rain.d.mts"
           if gh release view "$GITHUB_REF_NAME" > /dev/null 2>&1; then
             gh release edit "$GITHUB_REF_NAME" --title "rjl-rain $version" --notes-file notes.md
-            gh release upload "$GITHUB_REF_NAME" rjl-rain.js rjl-rain.min.js --clobber
+            gh release upload "$GITHUB_REF_NAME" $files --clobber
           else
-            gh release create "$GITHUB_REF_NAME" rjl-rain.js rjl-rain.min.js --verify-tag --title "rjl-rain $version" --notes-file notes.md
+            gh release create "$GITHUB_REF_NAME" $files --verify-tag --title "rjl-rain $version" --notes-file notes.md
           fi
+
+  pages:
+    name: Playground on GitHub Pages
+    needs: test
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    permissions:
+      pages: write
+      id-token: write
+    environment:
+      name: github-pages
+      url: ${{ steps.deploy.outputs.page_url }}playground/
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7
+
+      - name: Assemble the site (the playground, the demo and the builds of this tag)
+        run: |
+          mkdir -p _site/playground _site/demo
+          cp rjl-rain.js rjl-rain.min.js rjl-rain.mjs rjl-rain.min.mjs _site/
+          cp playground/index.html _site/playground/
+          cp demo/index.html _site/demo/
+          printf '<!DOCTYPE html>\n<meta charset="utf-8">\n<title>rjl-rain</title>\n<meta http-equiv="refresh" content="0; url=playground/">\n<a href="playground/">rjl-rain playground</a>\n' > _site/index.html
+
+      - name: Configure Pages
+        uses: actions/configure-pages@v6
+
+      - name: Upload
+        uses: actions/upload-pages-artifact@v5
+        with:
+          path: _site
+
+      - name: Deploy
+        id: deploy
+        uses: actions/deploy-pages@v5
 
   npm:
     name: npm publish
@@ -110,6 +151,11 @@ jobs:
           version=$(node -p "require('./package.json').version")
           if npm view "rjl-rain@$version" version > /dev/null 2>&1; then
             echo "rjl-rain@$version is already on npm - nothing to publish."
+            exit 0
+          fi
+          latest=$(npm view rjl-rain version 2> /dev/null || true)
+          if [ -n "$latest" ] && [ "$(printf '%s\n%s\n' "$latest" "$version" | sort -V | tail -n 1)" != "$version" ]; then
+            echo "npm already has rjl-rain@$latest, newer than $version - not publishing an older version over it."
             exit 0
           fi
           echo "npm $(npm -v)"

@@ -1,0 +1,369 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>rjl-rain playground</title>
+  <meta name="description" content="Try every rjl-rain option live - colors, glyphs, speed, words, a transparent background, a pause button - and copy the code it writes.">
+  <style>
+    :root { color-scheme: dark; --fg: #B6FFB6; --dim: #7c7; --accent: #00FF00; --line: #0a3; --field: #031; }
+    html { background: #000; }
+    /* With a transparent background the rain falls over this, so you can see what shows through. */
+    html.see-through {
+      background:
+        radial-gradient(circle at 75% 25%, rgba(140, 60, 255, 0.55), transparent 45%),
+        radial-gradient(circle at 85% 80%, rgba(0, 150, 220, 0.5), transparent 50%),
+        linear-gradient(160deg, #1b1035, #06303a);
+    }
+    body { margin: 0; min-height: 100vh; font: 13px/1.45 ui-monospace, Menlo, Consolas, monospace; color: var(--fg); }
+    a { color: var(--accent); }
+    .panel {
+      position: fixed; top: 16px; left: 16px; bottom: 16px; width: 380px; max-width: calc(100vw - 32px);
+      box-sizing: border-box; overflow: auto; padding: 14px 16px; background: rgba(0, 10, 0, 0.84);
+      border: 1px solid var(--line); border-radius: 8px;
+    }
+    .panel[hidden], #show[hidden] { display: none; }
+    h1 { margin: 0; font-size: 18px; color: var(--accent); }
+    .lede { margin: 2px 0 10px; color: var(--dim); }
+    fieldset { margin: 0 0 10px; padding: 8px 10px 10px; border: 1px solid #063; border-radius: 6px; }
+    legend { padding: 0 4px; color: var(--accent); }
+    .field { display: grid; grid-template-columns: 110px 1fr auto; align-items: center; gap: 4px 8px; margin-top: 6px; }
+    .field label { color: var(--fg); }
+    .field output { min-width: 3.5em; text-align: right; color: var(--dim); }
+    input, select, button {
+      font: inherit; color: var(--fg); background: var(--field); border: 1px solid var(--line); border-radius: 4px;
+      box-sizing: border-box; min-width: 0;
+    }
+    input[type=text], select { width: 100%; padding: 3px 6px; }
+    input[type=range] { width: 100%; accent-color: var(--accent); background: none; border: 0; }
+    input[type=color] { width: 44px; height: 24px; padding: 0 2px; }
+    input[type=checkbox] { accent-color: var(--accent); }
+    .check { display: flex; align-items: center; gap: 6px; }
+    button { padding: 4px 10px; cursor: pointer; white-space: nowrap; }
+    button:hover, button:focus-visible { background: #052; outline: none; }
+    .row { display: flex; flex-wrap: wrap; gap: 6px; margin: 4px 0 10px; }
+    .tabs { display: flex; gap: 6px; margin-bottom: 6px; }
+    .tabs button[aria-selected=true] { background: #063; border-color: var(--accent); }
+    pre {
+      margin: 0; padding: 10px; overflow: auto; background: #010; border: 1px solid #063; border-radius: 6px;
+      white-space: pre; font-size: 12px; color: #d9ffd9; max-height: 260px;
+    }
+    #show { position: fixed; top: 16px; left: 16px; }
+    @media (max-width: 640px) {
+      .panel { top: auto; left: 16px; right: 16px; width: auto; max-height: 62vh; }
+      .field { grid-template-columns: 96px 1fr auto; }
+    }
+  </style>
+</head>
+<body>
+  <button type="button" id="show" hidden>Show the panel</button>
+
+  <div class="panel" id="panel">
+    <h1>rjl-rain playground <span id="ver"></span></h1>
+    <p class="lede">Every option, live. Move the pointer through the rain and click for ripples. The code
+      below is ready to paste. <a href="https://github.com/rjlsoftware/rjl-rain">Docs on GitHub</a></p>
+
+    <form id="opts" autocomplete="off">
+      <fieldset>
+        <legend>Glyphs</legend>
+        <div class="field">
+          <label for="preset">chars</label>
+          <select id="preset">
+            <option value="classic">Classic (katakana + digits)</option>
+            <option value="rjl">RJL</option>
+            <option value="binary">Binary</option>
+            <option value="hex">Hex</option>
+            <option value="custom">Your own...</option>
+          </select>
+          <span></span>
+        </div>
+        <div class="field" id="custom-row" hidden>
+          <label for="custom">your glyphs</label>
+          <input type="text" id="custom" value="RAIN">
+          <span></span>
+        </div>
+        <div class="field">
+          <label for="fontSize">fontSize</label>
+          <input type="range" id="fontSize" min="8" max="48" step="1" value="16">
+          <output for="fontSize"></output>
+        </div>
+      </fieldset>
+
+      <fieldset>
+        <legend>Colors</legend>
+        <div class="field">
+          <label for="color">color</label>
+          <input type="color" id="color" value="#00ff00">
+          <span></span>
+        </div>
+        <div class="field">
+          <label for="bright">bright</label>
+          <input type="color" id="bright" value="#b6ffb6">
+          <span></span>
+        </div>
+        <div class="field">
+          <label for="head">head</label>
+          <span class="check"><input type="checkbox" id="headOn" aria-label="Color the leading glyph"><input type="color" id="head" value="#e8ffe8"></span>
+          <span></span>
+        </div>
+        <div class="field">
+          <label for="background">background</label>
+          <span class="check"><input type="color" id="background" value="#000000"><label class="check"><input type="checkbox" id="transparent"> transparent</label></span>
+          <span></span>
+        </div>
+        <div class="row" aria-label="Palettes">
+          <button type="button" data-palette="#00FF00,#B6FFB6">Green</button>
+          <button type="button" data-palette="#FFB000,#FFE2A8">Amber</button>
+          <button type="button" data-palette="#9BD4FF,#FFFFFF">Ice</button>
+          <button type="button" data-palette="#FF3B30,#FFB3AE">Red</button>
+          <button type="button" data-palette="#C77DFF,#F3E0FF">Violet</button>
+        </div>
+      </fieldset>
+
+      <fieldset>
+        <legend>Motion</legend>
+        <div class="field">
+          <label for="fade">fade</label>
+          <input type="range" id="fade" min="0.01" max="0.3" step="0.01" value="0.05">
+          <output for="fade"></output>
+        </div>
+        <div class="field">
+          <label for="fps">fps</label>
+          <input type="range" id="fps" min="5" max="60" step="1" value="20">
+          <output for="fps"></output>
+        </div>
+        <div class="field">
+          <label for="speed">speed</label>
+          <input type="range" id="speed" min="0.2" max="3" step="0.1" value="1">
+          <output for="speed"></output>
+        </div>
+        <div class="field">
+          <label for="speedVariance">speedVariance</label>
+          <input type="range" id="speedVariance" min="0" max="1" step="0.05" value="0">
+          <output for="speedVariance"></output>
+        </div>
+      </fieldset>
+
+      <fieldset>
+        <legend>Words</legend>
+        <div class="field">
+          <label for="word">word</label>
+          <input type="text" id="word" value="RJL" aria-describedby="word-hint">
+          <span></span>
+        </div>
+        <p id="word-hint" class="lede">Separate words with commas to spell them in turn. Empty turns words off.</p>
+        <div class="field">
+          <label for="wordPosition">wordPosition</label>
+          <select id="wordPosition"><option value="random">random</option><option value="center">center</option></select>
+          <span></span>
+        </div>
+        <div class="field">
+          <label for="wordScale">wordScale</label>
+          <input type="range" id="wordScale" min="1" max="4" step="1" value="1">
+          <output for="wordScale"></output>
+        </div>
+        <div class="field">
+          <label for="wordChance">wordChance</label>
+          <input type="range" id="wordChance" min="0" max="0.05" step="0.001" value="0.005">
+          <output for="wordChance"></output>
+        </div>
+      </fieldset>
+
+      <fieldset>
+        <legend>Pointer and controls</legend>
+        <div class="field">
+          <label for="interactive">interactive</label>
+          <input type="checkbox" id="interactive" checked>
+          <span></span>
+        </div>
+        <div class="field">
+          <label for="glowRadius">glowRadius</label>
+          <input type="range" id="glowRadius" min="0" max="200" step="5" value="70">
+          <output for="glowRadius"></output>
+        </div>
+        <div class="field">
+          <label for="controls">controls</label>
+          <input type="checkbox" id="controls">
+          <span></span>
+        </div>
+      </fieldset>
+    </form>
+
+    <div class="row">
+      <button type="button" id="spell">Spell a word now</button>
+      <button type="button" id="pause">Pause</button>
+      <button type="button" id="reset">Reset</button>
+      <button type="button" id="hide">Hide the panel</button>
+    </div>
+
+    <div class="tabs" role="tablist" aria-label="Code">
+      <button type="button" role="tab" id="tab-script" aria-selected="true" aria-controls="code">Script</button>
+      <button type="button" role="tab" id="tab-element" aria-selected="false" aria-controls="code">&lt;rjl-rain&gt;</button>
+      <button type="button" id="copy">Copy</button>
+    </div>
+    <pre id="code" role="tabpanel" tabindex="0"></pre>
+  </div>
+
+  <script src="../rjl-rain.min.js"></script>
+  <script>
+    (function () {
+      'use strict';
+      var D = RJLRain.defaults;
+      var rain = window.rain = RJLRain();
+      var $ = function (id) { return document.getElementById(id); };
+      var form = $('opts');
+      var mode = 'script';
+      var sri = '';
+
+      $('ver').textContent = 'v' + RJLRain.version;
+
+      // The integrity hash of the very file this page runs, which is the release's file.
+      if (window.crypto && crypto.subtle && window.fetch) {
+        fetch('../rjl-rain.min.js').then(function (r) { return r.arrayBuffer(); })
+          .then(function (buf) { return crypto.subtle.digest('SHA-384', buf); })
+          .then(function (hash) {
+            sri = 'sha384-' + btoa(String.fromCharCode.apply(null, new Uint8Array(hash)));
+            render();
+          }, function () {});
+      }
+
+      function num(id) { return Number($(id).value); }
+      function words(text) {
+        var list = text.split(',').map(function (w) { return w.trim(); }).filter(Boolean);
+        return list.length > 1 ? list : (list[0] || '');
+      }
+
+      // The options the form describes.
+      function read() {
+        var preset = $('preset').value;
+        return {
+          chars: preset === 'custom' ? ($('custom').value || D.chars) : RJLRain.glyphs[preset],
+          color: $('color').value.toUpperCase(),
+          bright: $('bright').value.toUpperCase(),
+          head: $('headOn').checked ? $('head').value.toUpperCase() : '',
+          background: $('transparent').checked ? 'transparent' : $('background').value.toUpperCase(),
+          fade: num('fade'),
+          fontSize: num('fontSize'),
+          fps: num('fps'),
+          speed: num('speed'),
+          speedVariance: num('speedVariance'),
+          word: words($('word').value),
+          wordPosition: $('wordPosition').value,
+          wordScale: num('wordScale'),
+          wordChance: num('wordChance'),
+          interactive: $('interactive').checked,
+          glowRadius: num('glowRadius'),
+          controls: $('controls').checked
+        };
+      }
+
+      // Only what differs from the defaults goes into the code.
+      function changes(o) {
+        var out = [];
+        Object.keys(o).forEach(function (k) {
+          var v = o[k], d = D[k];
+          var same = Array.isArray(v) ? false : typeof v === 'string' && typeof d === 'string' ? v.toUpperCase() === d.toUpperCase() : v === d;
+          if (!same) out.push([k, v]);
+        });
+        return out;
+      }
+
+      function quote(s) { return "'" + String(s).replace(/\\/g, '\\\\').replace(/'/g, "\\'") + "'"; }
+      function presetName(chars) {
+        var names = Object.keys(RJLRain.glyphs);
+        for (var i = 0; i < names.length; i++) if (RJLRain.glyphs[names[i]] === chars) return names[i];
+        return '';
+      }
+      function literal(k, v) {
+        if (k === 'chars' && presetName(v)) return 'RJLRain.glyphs.' + presetName(v);
+        if (Array.isArray(v)) return '[' + v.map(quote).join(', ') + ']';
+        return typeof v === 'string' ? quote(v) : String(v);
+      }
+      function kebab(k) { return k.replace(/[A-Z]/g, function (c) { return '-' + c.toLowerCase(); }); }
+      function attr(s) { return String(s).replace(/&/g, '&amp;').replace(/"/g, '&quot;').replace(/</g, '&lt;'); }
+
+      function scriptTag() {
+        var src = 'https://cdn.jsdelivr.net/gh/rjlsoftware/rjl-rain@v' + RJLRain.version + '/rjl-rain.min.js';
+        return '<script src="' + src + '"' + (sri ? ' integrity="' + sri + '" crossorigin="anonymous"' : '') + '></' + 'script>';
+      }
+
+      function render() {
+        var list = changes(read());
+        var code;
+        if (mode === 'script') {
+          var call;
+          if (!list.length) call = '<' + 'script>RJLRain();</' + 'script>';
+          else if (list.length === 1) call = '<' + 'script>RJLRain({ ' + list[0][0] + ': ' + literal(list[0][0], list[0][1]) + ' });</' + 'script>';
+          else call = '<' + 'script>\n  RJLRain({\n' + list.map(function (p) { return '    ' + p[0] + ': ' + literal(p[0], p[1]); }).join(',\n') + '\n  });\n</' + 'script>';
+          code = scriptTag() + '\n' + call;
+        } else {
+          var attrs = list.map(function (p) {
+            var k = p[0], v = p[1];
+            if (v === true) return ' ' + kebab(k);
+            if (k === 'chars' && presetName(v)) v = presetName(v);
+            if (Array.isArray(v)) v = v.join(', ');
+            return ' ' + kebab(k) + '="' + attr(v) + '"';
+          });
+          code = scriptTag() + '\n<rjl-rain fullscreen' + attrs.join('') + '></rjl-rain>';
+        }
+        $('code').textContent = code;
+      }
+
+      function apply() {
+        $('custom-row').hidden = $('preset').value !== 'custom';
+        form.querySelectorAll('output').forEach(function (out) { out.textContent = $(out.getAttribute('for')).value; });
+        var o = read();
+        document.documentElement.classList.toggle('see-through', o.background === 'transparent');
+        rain.set(o);
+        $('pause').textContent = rain.paused ? 'Resume' : 'Pause';
+        render();
+      }
+
+      form.addEventListener('input', apply);
+      form.addEventListener('change', apply);
+      form.addEventListener('submit', function (e) { e.preventDefault(); });
+
+      document.querySelectorAll('[data-palette]').forEach(function (b) {
+        b.addEventListener('click', function () {
+          var pair = b.getAttribute('data-palette').split(',');
+          $('color').value = pair[0].toLowerCase();
+          $('bright').value = pair[1].toLowerCase();
+          apply();
+        });
+      });
+
+      $('spell').addEventListener('click', function () { rain.form(); });
+      $('pause').addEventListener('click', function () {
+        if (rain.paused) rain.resume(); else rain.pause();
+        $('pause').textContent = rain.paused ? 'Resume' : 'Pause';
+      });
+      $('reset').addEventListener('click', function () { form.reset(); apply(); });
+      $('hide').addEventListener('click', function () { $('panel').hidden = true; $('show').hidden = false; $('show').focus(); });
+      $('show').addEventListener('click', function () { $('panel').hidden = false; $('show').hidden = true; $('hide').focus(); });
+
+      ['script', 'element'].forEach(function (m) {
+        $('tab-' + m).addEventListener('click', function () {
+          mode = m;
+          $('tab-script').setAttribute('aria-selected', String(m === 'script'));
+          $('tab-element').setAttribute('aria-selected', String(m === 'element'));
+          render();
+        });
+      });
+
+      $('copy').addEventListener('click', function () {
+        var text = $('code').textContent;
+        var done = function () { $('copy').textContent = 'Copied'; setTimeout(function () { $('copy').textContent = 'Copy'; }, 1500); };
+        if (navigator.clipboard && navigator.clipboard.writeText) navigator.clipboard.writeText(text).then(done, function () {});
+        else {
+          var range = document.createRange();
+          range.selectNodeContents($('code'));
+          getSelection().removeAllRanges();
+          getSelection().addRange(range);
+        }
+      });
+
+      apply();
+    })();
+  </script>
+</body>
+</html>
