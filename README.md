@@ -49,14 +49,14 @@ for the word.
 Full-screen rain behind your page, from a CDN:
 
 ```html
-<script src="https://cdn.jsdelivr.net/gh/rjlsoftware/rjl-rain@v1.1.1/rjl-rain.min.js" integrity="sha384-cKYiCuuY2ponzl1oN9S28Tak9x0P1KH5IkkltzEmRCFSidDC0ISQXuAc0PyhqKy5" crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/gh/rjlsoftware/rjl-rain@v1.1.2/rjl-rain.min.js" integrity="sha384-lQ9iYic+79u46VT+3uKaZcBWq7jRWhMXPReDqy08O/gCXoV2005Wb++cz1QieESD" crossorigin="anonymous"></script>
 <script>RJLRain();</script>
 ```
 
 That is the whole install. `RJLRain()` with no target creates a fixed, full-viewport canvas behind
 everything else on the page (it waits for `<body>` if you call it from `<head>`). jsDelivr serves the
 file straight from the release tag, and the `integrity` hash makes the browser refuse any other
-bytes. The npm package is on unpkg too: `https://unpkg.com/rjl-rain@1.1.1/rjl-rain.min.js`.
+bytes. The npm package is on unpkg too: `https://unpkg.com/rjl-rain@1.1.2/rjl-rain.min.js`.
 
 **No JavaScript at all:** load the script, then put the rain where you want it:
 
@@ -70,7 +70,7 @@ bytes. The npm package is on unpkg too: `https://unpkg.com/rjl-rain@1.1.1/rjl-ra
 ```bash
 npm install rjl-rain
 # or straight from GitHub:
-npm install github:rjlsoftware/rjl-rain#v1.1.1
+npm install github:rjlsoftware/rjl-rain#v1.1.2
 ```
 
 ```js
@@ -82,7 +82,7 @@ RJLRain();
 
 ```html
 <script type="module">
-  import RJLRain from 'https://cdn.jsdelivr.net/gh/rjlsoftware/rjl-rain@v1.1.1/rjl-rain.min.mjs';
+  import RJLRain from 'https://cdn.jsdelivr.net/gh/rjlsoftware/rjl-rain@v1.1.2/rjl-rain.min.mjs';
   RJLRain();
 </script>
 ```
@@ -183,9 +183,12 @@ Each one's controller is `element.rjlRain`.
 ## Frameworks
 
 Import it anywhere: nothing touches the DOM until you call it, so server rendering is safe. Start
-it once the element exists and destroy it when the component goes away.
+the rain once the element exists, and destroy it when the component goes away - every example below
+does both. Or skip the wiring in any framework: `import 'rjl-rain'` once and use `<rjl-rain>` in
+your templates, which starts when it is added to the page and cleans up when it is removed.
 
-**React** (in Next.js, a `'use client'` component):
+<details open>
+<summary><b>React</b> - also Next.js, React Router and TanStack Start</summary>
 
 ```jsx
 import { useEffect, useRef } from 'react';
@@ -201,47 +204,240 @@ export function Hero() {
 }
 ```
 
-**Vue:**
+In Next.js, put it in a `'use client'` component.
+
+</details>
+
+<details>
+<summary><b>Vue</b> - also Nuxt</summary>
 
 ```vue
 <script setup>
-import { onMounted, onBeforeUnmount, ref } from 'vue';
+import { onMounted, onBeforeUnmount, useTemplateRef } from 'vue';
 import RJLRain from 'rjl-rain';
 
-const hero = ref(null);
+const hero = useTemplateRef('hero');
 let rain;
 onMounted(() => { rain = RJLRain(hero.value, { word: 'HELLO' }); });
 onBeforeUnmount(() => rain.destroy());
 </script>
 
-<template><section ref="hero" style="height: 420px"><h1>Hello</h1></section></template>
+<template>
+  <section ref="hero" style="height: 420px"><h1>Hello</h1></section>
+</template>
 ```
 
-**Svelte** (an action, so options stay live):
+Nuxt runs it as is: `onMounted` only runs in the browser.
+
+</details>
+
+<details>
+<summary><b>Angular</b></summary>
+
+```ts
+import { Component, DestroyRef, ElementRef, afterNextRender, inject, viewChild } from '@angular/core';
+import RJLRain from 'rjl-rain';
+
+@Component({
+  selector: 'app-hero',
+  template: `<section #hero style="height: 420px"><h1>Hello</h1></section>`
+})
+export class Hero {
+  private hero = viewChild.required<ElementRef<HTMLElement>>('hero');
+  private destroyRef = inject(DestroyRef);
+
+  constructor() {
+    afterNextRender(() => {
+      const rain = RJLRain(this.hero().nativeElement, { word: 'HELLO' });
+      this.destroyRef.onDestroy(() => rain.destroy());
+    });
+  }
+}
+```
+
+`afterNextRender` only runs in the browser, so it is safe with Angular SSR. To use `<rjl-rain>` in
+an Angular template instead, add `schemas: [CUSTOM_ELEMENTS_SCHEMA]` to the component.
+
+</details>
+
+<details>
+<summary><b>Svelte</b> - also SvelteKit</summary>
 
 ```svelte
 <script>
   import RJLRain from 'rjl-rain';
-  function rain(node, options) {
+
+  // An attachment: it runs when the element mounts and cleans up when it goes.
+  const rain = (options) => (node) => {
     const r = RJLRain(node, options);
-    return { update: (next) => r.set(next), destroy: () => r.destroy() };
-  }
+    return () => r.destroy();
+  };
 </script>
 
-<section use:rain={{ word: 'HELLO' }} style="height: 420px"><h1>Hello</h1></section>
+<section {@attach rain({ word: 'HELLO' })} style="height: 420px"><h1>Hello</h1></section>
 ```
 
-**Astro**, or any site with a build step:
+Attachments need Svelte 5.29 or later. On older versions, use an action (`use:rain`) that returns
+`{ destroy }`.
+
+</details>
+
+<details>
+<summary><b>Astro</b></summary>
 
 ```astro
 <section id="hero" style="height: 420px"><h1>Hello</h1></section>
+
 <script>
   import RJLRain from 'rjl-rain';
   RJLRain('#hero', { word: 'HELLO' });
 </script>
 ```
 
-Or skip the wiring: `import 'rjl-rain'` once, then use `<rjl-rain>` in any template.
+Astro bundles the script and runs it in the browser. With `<ClientRouter />` (view transitions),
+start it in a `document.addEventListener('astro:page-load', ...)` handler, or use `<rjl-rain>`,
+which starts and stops with each page by itself.
+
+</details>
+
+<details>
+<summary><b>SolidJS</b></summary>
+
+```jsx
+import { onCleanup, onMount } from 'solid-js';
+import RJLRain from 'rjl-rain';
+
+export function Hero() {
+  let hero;
+  onMount(() => {
+    const rain = RJLRain(hero, { word: 'HELLO' });
+    onCleanup(() => rain.destroy());
+  });
+  return <section ref={hero} style={{ height: '420px' }}><h1>Hello</h1></section>;
+}
+```
+
+</details>
+
+<details>
+<summary><b>Preact</b></summary>
+
+```jsx
+import { useEffect, useRef } from 'preact/hooks';
+import RJLRain from 'rjl-rain';
+
+export function Hero() {
+  const ref = useRef(null);
+  useEffect(() => {
+    const rain = RJLRain(ref.current, { word: 'HELLO' });
+    return () => rain.destroy();
+  }, []);
+  return <section ref={ref} style={{ height: 420 }}><h1>Hello</h1></section>;
+}
+```
+
+</details>
+
+<details>
+<summary><b>Qwik</b></summary>
+
+```tsx
+import { component$, useSignal, useVisibleTask$ } from '@builder.io/qwik';
+import RJLRain from 'rjl-rain';
+
+export const Hero = component$(() => {
+  const hero = useSignal<HTMLElement>();
+  // Runs in the browser once the section scrolls into view, so the rain costs nothing until then.
+  useVisibleTask$(({ cleanup }) => {
+    const rain = RJLRain(hero.value!, { word: 'HELLO' });
+    cleanup(() => rain.destroy());
+  });
+  return <section ref={hero} style={{ height: '420px' }}><h1>Hello</h1></section>;
+});
+```
+
+</details>
+
+<details>
+<summary><b>Lit</b> - and other web components</summary>
+
+```js
+import { LitElement, html } from 'lit';
+import RJLRain from 'rjl-rain';
+
+class RainHero extends LitElement {
+  async connectedCallback() {
+    super.connectedCallback();
+    await this.updateComplete;
+    this.rain = RJLRain(this.renderRoot.querySelector('section'), { word: 'HELLO' });
+  }
+  disconnectedCallback() {
+    super.disconnectedCallback();
+    this.rain?.destroy();
+  }
+  render() {
+    return html`<section style="height: 420px"><h1>Hello</h1></section>`;
+  }
+}
+customElements.define('rain-hero', RainHero);
+```
+
+It works inside a shadow root: the canvas lands next to the section's content there.
+
+</details>
+
+<details>
+<summary><b>Alpine.js</b></summary>
+
+```html
+<script>
+  document.addEventListener('alpine:init', () => {
+    Alpine.data('rain', (options = {}) => {
+      let rain; // kept out of Alpine's reactive state on purpose
+      return {
+        init() { rain = RJLRain(this.$el, options); },
+        destroy() { rain.destroy(); }
+      };
+    });
+  });
+</script>
+
+<section x-data="rain({ word: 'HELLO' })" style="height: 420px"><h1>Hello</h1></section>
+```
+
+</details>
+
+<details>
+<summary><b>htmx, Hotwire Turbo, Livewire, Phoenix LiveView</b></summary>
+
+Server-driven pages swap HTML in and out, so use `<rjl-rain>`: it starts when it is swapped in and
+destroys itself when it is swapped out, with no events to wire up.
+
+```html
+<rjl-rain id="hero-rain" word="HELLO" style="height: 420px"></rjl-rain>
+```
+
+In Livewire add `wire:ignore`, and in LiveView `phx-update="ignore"` (it needs the `id`), so a
+re-render leaves its canvas alone.
+
+</details>
+
+<details>
+<summary><b>WordPress, Webflow, Shopify, Squarespace and other site builders</b></summary>
+
+Paste this into a custom code or HTML embed block (in WordPress, a Custom HTML block, or the theme
+footer for every page):
+
+```html
+<script src="https://cdn.jsdelivr.net/gh/rjlsoftware/rjl-rain@v1.1.2/rjl-rain.min.js" integrity="sha384-lQ9iYic+79u46VT+3uKaZcBWq7jRWhMXPReDqy08O/gCXoV2005Wb++cz1QieESD" crossorigin="anonymous"></script>
+<rjl-rain fullscreen word="HELLO"></rjl-rain>
+```
+
+Swap `fullscreen` for a `style="height: 420px"` to rain in that spot only. The
+[playground](https://rjlsoftware.github.io/rjl-rain/playground/) writes this snippet for any look
+you pick.
+
+</details>
 
 ## Accessibility
 

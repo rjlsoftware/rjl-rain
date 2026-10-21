@@ -2,6 +2,12 @@
 
 All notable changes to rjl-rain. Version format: Major.Medium.Minor.
 
+## [1.1.2] - 10-20-2026 at 9:01pm
+
+### Changed
+- README Frameworks section: an example for each popular front end of 2026, each in a collapsible section - React (and Next.js, React Router, TanStack Start), Vue (and Nuxt, now with `useTemplateRef`), Angular (`viewChild` + `afterNextRender`, SSR-safe), Svelte (an `{@attach}` attachment), Astro (with view transitions), SolidJS, Preact, Qwik (`useVisibleTask$`), Lit, Alpine.js, the server-driven stacks (htmx, Hotwire Turbo, Livewire, Phoenix LiveView) through `<rjl-rain>`, and site builders (WordPress, Webflow, Shopify, Squarespace) with a paste-in snippet.
+- README artwork: the hero, touch and themes images have rounded corners and a green glow (baked into the PNGs, since GitHub strips CSS from READMEs) that reads on both GitHub themes. No library changes beyond the version.
+
 ## [1.1.1] - 10-20-2026 at 8:47pm
 
 ### Fixed

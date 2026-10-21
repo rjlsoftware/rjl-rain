@@ -1,4 +1,4 @@
-/*! rjl-rain v1.1.1 | MIT License | (c) 2026 RJ Lindelof | https://github.com/rjlsoftware/rjl-rain */
+/*! rjl-rain v1.1.2 | MIT License | (c) 2026 RJ Lindelof | https://github.com/rjlsoftware/rjl-rain */
 // rjl-rain.mjs - the ES module build, generated from rjl-rain.js by scripts/build.js. Edit that file instead.
 // rjl-rain - Matrix digital rain on a <canvas>. One file, zero dependencies.
 //
@@ -17,7 +17,7 @@
 const RJLRain = (function () {
   'use strict';
 
-  const VERSION = '1.1.1';
+  const VERSION = '1.1.2';
 
   function range(from, to) {
     let s = '';
