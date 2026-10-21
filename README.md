@@ -49,14 +49,14 @@ for the word.
 Full-screen rain behind your page, from a CDN:
 
 ```html
-<script src="https://cdn.jsdelivr.net/gh/rjlsoftware/rjl-rain@v1.1.0/rjl-rain.min.js" integrity="sha384-AFl4wl43FIhk5kJ4zFLmb3eQHLg1R0cxFCxNP4YeRq1TxyEs+S9VuvfirsBgC9jY" crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/gh/rjlsoftware/rjl-rain@v1.1.1/rjl-rain.min.js" integrity="sha384-cKYiCuuY2ponzl1oN9S28Tak9x0P1KH5IkkltzEmRCFSidDC0ISQXuAc0PyhqKy5" crossorigin="anonymous"></script>
 <script>RJLRain();</script>
 ```
 
 That is the whole install. `RJLRain()` with no target creates a fixed, full-viewport canvas behind
 everything else on the page (it waits for `<body>` if you call it from `<head>`). jsDelivr serves the
 file straight from the release tag, and the `integrity` hash makes the browser refuse any other
-bytes. The npm package is on unpkg too: `https://unpkg.com/rjl-rain@1.1.0/rjl-rain.min.js`.
+bytes. The npm package is on unpkg too: `https://unpkg.com/rjl-rain@1.1.1/rjl-rain.min.js`.
 
 **No JavaScript at all:** load the script, then put the rain where you want it:
 
@@ -70,7 +70,7 @@ bytes. The npm package is on unpkg too: `https://unpkg.com/rjl-rain@1.1.0/rjl-ra
 ```bash
 npm install rjl-rain
 # or straight from GitHub:
-npm install github:rjlsoftware/rjl-rain#v1.1.0
+npm install github:rjlsoftware/rjl-rain#v1.1.1
 ```
 
 ```js
@@ -82,7 +82,7 @@ RJLRain();
 
 ```html
 <script type="module">
-  import RJLRain from 'https://cdn.jsdelivr.net/gh/rjlsoftware/rjl-rain@v1.1.0/rjl-rain.min.mjs';
+  import RJLRain from 'https://cdn.jsdelivr.net/gh/rjlsoftware/rjl-rain@v1.1.1/rjl-rain.min.mjs';
   RJLRain();
 </script>
 ```

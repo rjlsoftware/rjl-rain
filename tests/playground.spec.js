@@ -15,7 +15,14 @@ test('the playground drives the rain and writes the code for it', async ({ page 
     await expect(code).toContainText(`rjl-rain@v${version}/rjl-rain.min.js" integrity="${sri}" crossorigin="anonymous"`);
     await expect(code).toContainText('RJLRain();');
 
+    // The custom-glyphs field shows only for "Your own...".
+    await expect(page.locator('#custom-row')).toBeHidden();
+    await page.selectOption('#preset', 'custom');
+    await expect(page.locator('#custom-row')).toBeVisible();
+    await expect(code).toContainText("chars: 'RAIN'");
+
     await page.selectOption('#preset', 'binary');
+    await expect(page.locator('#custom-row')).toBeHidden();
     await page.fill('#word', 'HELLO, WORLD');
     await page.check('#transparent');
     await expect(code).toContainText('chars: RJLRain.glyphs.binary');

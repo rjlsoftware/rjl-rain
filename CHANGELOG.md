@@ -2,6 +2,11 @@
 
 All notable changes to rjl-rain. Version format: Major.Medium.Minor.
 
+## [1.1.1] - 10-20-2026 at 8:47pm
+
+### Fixed
+- Playground: the "your glyphs" field showed for every preset (a `display: grid` rule beat the `hidden` attribute), the code box cut off the long `<script>` line instead of wrapping it, and on a phone the pause button covered the corner of the panel. The playground test now checks the field's visibility. No library changes beyond the version.
+
 ## [1.1.0] - 10-20-2026 at 8:42pm
 
 ### Added
