@@ -49,14 +49,16 @@ for the word.
 Full-screen rain behind your page, from a CDN:
 
 ```html
-<script src="https://cdn.jsdelivr.net/gh/rjlsoftware/rjl-rain@v1.1.3/rjl-rain.min.js" integrity="sha384-euQYBpvi1MCQQtelXPqN9ZCoy0bqG6T6Efs2YQ9vfrp/tIgZubAWZRpa4yzHun2z" crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/gh/rjlsoftware/rjl-rain@v1.1.4/rjl-rain.min.js" integrity="sha384-BzL4UuKSJUM7w459NZ7D0gbQ7F8fvcuMuG0e5V3JitJ4pdDoO5VNwJFJpZjHxb/T" crossorigin="anonymous"></script>
 <script>RJLRain();</script>
 ```
 
 That is the whole install. `RJLRain()` with no target creates a fixed, full-viewport canvas behind
 everything else on the page (it waits for `<body>` if you call it from `<head>`). jsDelivr serves the
 file straight from the release tag, and the `integrity` hash makes the browser refuse any other
-bytes. The npm package is on unpkg too: `https://unpkg.com/rjl-rain@1.1.3/rjl-rain.min.js`.
+bytes. The same file is on the CDNs that mirror npm too:
+`https://cdn.jsdelivr.net/npm/rjl-rain@1.1.4/rjl-rain.min.js` and
+`https://unpkg.com/rjl-rain@1.1.4/rjl-rain.min.js`.
 
 **No JavaScript at all:** load the script, then put the rain where you want it:
 
@@ -70,7 +72,7 @@ bytes. The npm package is on unpkg too: `https://unpkg.com/rjl-rain@1.1.3/rjl-ra
 ```bash
 npm install rjl-rain
 # or straight from GitHub:
-npm install github:rjlsoftware/rjl-rain#v1.1.3
+npm install github:rjlsoftware/rjl-rain#v1.1.4
 ```
 
 ```js
@@ -82,7 +84,7 @@ RJLRain();
 
 ```html
 <script type="module">
-  import RJLRain from 'https://cdn.jsdelivr.net/gh/rjlsoftware/rjl-rain@v1.1.3/rjl-rain.min.mjs';
+  import RJLRain from 'https://cdn.jsdelivr.net/gh/rjlsoftware/rjl-rain@v1.1.4/rjl-rain.min.mjs';
   RJLRain();
 </script>
 ```
@@ -356,6 +358,8 @@ export const Hero = component$(() => {
 });
 ```
 
+That is Qwik 1. On the Qwik 2 beta, import the same names from `@qwik.dev/core`.
+
 </details>
 
 <details>
@@ -429,7 +433,7 @@ Paste this into a custom code or HTML embed block (in WordPress, a Custom HTML b
 footer for every page):
 
 ```html
-<script src="https://cdn.jsdelivr.net/gh/rjlsoftware/rjl-rain@v1.1.3/rjl-rain.min.js" integrity="sha384-euQYBpvi1MCQQtelXPqN9ZCoy0bqG6T6Efs2YQ9vfrp/tIgZubAWZRpa4yzHun2z" crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/gh/rjlsoftware/rjl-rain@v1.1.4/rjl-rain.min.js" integrity="sha384-BzL4UuKSJUM7w459NZ7D0gbQ7F8fvcuMuG0e5V3JitJ4pdDoO5VNwJFJpZjHxb/T" crossorigin="anonymous"></script>
 <rjl-rain fullscreen word="HELLO"></rjl-rain>
 ```
 
@@ -534,6 +538,9 @@ Options: `--width`, `--height`, `--font`, `--chars`, `--word`, `--scale`, `--see
 `--bright`, `--background`, `--title`, `--out`. The same seed always produces the same file.
 
 ## Development
+
+Working on rjl-rain itself needs Node 22.12 or later (`devEngines` in `package.json`). Using it does
+not: the package has no Node requirement and no dependencies.
 
 ```bash
 npm install

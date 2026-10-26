@@ -2,6 +2,14 @@
 
 All notable changes to rjl-rain. Version format: Major.Medium.Minor.
 
+## [1.1.4] - 10-26-2026 at 4:52pm
+
+### Fixed
+- The package no longer declares a Node version for the people who install it. `engines` asked for Node 22.12 or later, which makes Yarn 1 refuse to install a browser library on an older Node; that requirement only ever applied to working on rjl-rain itself, so it moved to `devEngines`.
+
+### Changed
+- README: the npm CDN links (jsDelivr's `/npm/` path beside unpkg), a note on the Qwik 2 beta's import path, and the Node version needed for development. No library changes beyond the version.
+
 ## [1.1.3] - 10-26-2026 at 4:24pm
 
 ### Changed

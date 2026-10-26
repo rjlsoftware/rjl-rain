@@ -1,4 +1,4 @@
-/*! rjl-rain v1.1.3 | MIT License | (c) 2026 RJ Lindelof | https://github.com/rjlsoftware/rjl-rain */
+/*! rjl-rain v1.1.4 | MIT License | (c) 2026 RJ Lindelof | https://github.com/rjlsoftware/rjl-rain */
 // rjl-rain - Matrix digital rain on a <canvas>. One file, zero dependencies.
 //
 // Born as the background of RJL OS (https://rjl.sh): one requestAnimationFrame
@@ -19,7 +19,7 @@
 }(typeof self !== 'undefined' ? self : this, function () {
   'use strict';
 
-  const VERSION = '1.1.3';
+  const VERSION = '1.1.4';
 
   function range(from, to) {
     let s = '';
