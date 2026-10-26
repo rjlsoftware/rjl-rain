@@ -37,6 +37,7 @@ jobs:
         uses: actions/setup-node@v7
         with:
           node-version: 24
+          check-latest: true
           cache: npm
 
       - name: Tag matches the version and the changelog
@@ -144,6 +145,7 @@ jobs:
         uses: actions/setup-node@v7
         with:
           node-version: 24
+          check-latest: true
           registry-url: https://registry.npmjs.org
 
       - name: Publish unless this version is already on npm
