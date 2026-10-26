@@ -2,6 +2,11 @@
 
 All notable changes to rjl-rain. Version format: Major.Medium.Minor.
 
+## [1.1.3] - 10-26-2026 at 4:24pm
+
+### Changed
+- On npm: `npm install rjl-rain` now works, and the package is on jsDelivr and unpkg under `/npm/`. 1.1.2 was published by hand; 1.1.3 is the first version the release workflow publishes, through trusted publishing with provenance. No library changes beyond the version.
+
 ## [1.1.2] - 10-20-2026 at 9:01pm
 
 ### Changed

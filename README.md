@@ -49,14 +49,14 @@ for the word.
 Full-screen rain behind your page, from a CDN:
 
 ```html
-<script src="https://cdn.jsdelivr.net/gh/rjlsoftware/rjl-rain@v1.1.2/rjl-rain.min.js" integrity="sha384-lQ9iYic+79u46VT+3uKaZcBWq7jRWhMXPReDqy08O/gCXoV2005Wb++cz1QieESD" crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/gh/rjlsoftware/rjl-rain@v1.1.3/rjl-rain.min.js" integrity="sha384-euQYBpvi1MCQQtelXPqN9ZCoy0bqG6T6Efs2YQ9vfrp/tIgZubAWZRpa4yzHun2z" crossorigin="anonymous"></script>
 <script>RJLRain();</script>
 ```
 
 That is the whole install. `RJLRain()` with no target creates a fixed, full-viewport canvas behind
 everything else on the page (it waits for `<body>` if you call it from `<head>`). jsDelivr serves the
 file straight from the release tag, and the `integrity` hash makes the browser refuse any other
-bytes. The npm package is on unpkg too: `https://unpkg.com/rjl-rain@1.1.2/rjl-rain.min.js`.
+bytes. The npm package is on unpkg too: `https://unpkg.com/rjl-rain@1.1.3/rjl-rain.min.js`.
 
 **No JavaScript at all:** load the script, then put the rain where you want it:
 
@@ -70,7 +70,7 @@ bytes. The npm package is on unpkg too: `https://unpkg.com/rjl-rain@1.1.2/rjl-ra
 ```bash
 npm install rjl-rain
 # or straight from GitHub:
-npm install github:rjlsoftware/rjl-rain#v1.1.2
+npm install github:rjlsoftware/rjl-rain#v1.1.3
 ```
 
 ```js
@@ -82,7 +82,7 @@ RJLRain();
 
 ```html
 <script type="module">
-  import RJLRain from 'https://cdn.jsdelivr.net/gh/rjlsoftware/rjl-rain@v1.1.2/rjl-rain.min.mjs';
+  import RJLRain from 'https://cdn.jsdelivr.net/gh/rjlsoftware/rjl-rain@v1.1.3/rjl-rain.min.mjs';
   RJLRain();
 </script>
 ```
@@ -429,7 +429,7 @@ Paste this into a custom code or HTML embed block (in WordPress, a Custom HTML b
 footer for every page):
 
 ```html
-<script src="https://cdn.jsdelivr.net/gh/rjlsoftware/rjl-rain@v1.1.2/rjl-rain.min.js" integrity="sha384-lQ9iYic+79u46VT+3uKaZcBWq7jRWhMXPReDqy08O/gCXoV2005Wb++cz1QieESD" crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/gh/rjlsoftware/rjl-rain@v1.1.3/rjl-rain.min.js" integrity="sha384-euQYBpvi1MCQQtelXPqN9ZCoy0bqG6T6Efs2YQ9vfrp/tIgZubAWZRpa4yzHun2z" crossorigin="anonymous"></script>
 <rjl-rain fullscreen word="HELLO"></rjl-rain>
 ```
 
