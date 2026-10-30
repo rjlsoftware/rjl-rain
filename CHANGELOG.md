@@ -4,6 +4,9 @@ All notable changes to rjl-rain. Version format: Major.Medium.Minor.
 
 ## [1.1.4] - 10-26-2026 at 4:52pm
 
+### Changed - CI artifacts (10-30-2026 at 9:13am; CI only, no version bump)
+- A failed CI run's Playwright traces are now kept 2 days instead of 7, so test artifacts stay well inside the account's 0.5 GB of free GitHub Actions storage. No library change.
+
 ### Fixed
 - The package no longer declares a Node version for the people who install it. `engines` asked for Node 22.12 or later, which makes Yarn 1 refuse to install a browser library on an older Node; that requirement only ever applied to working on rjl-rain itself, so it moved to `devEngines`.
 
