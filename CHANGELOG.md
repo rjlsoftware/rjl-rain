@@ -2,6 +2,10 @@
 
 All notable changes to rjl-rain. Version format: Major.Medium.Minor.
 
+## [1.1.5] - 11-11-2026 at 12:30pm
+
+- Changed: GitHub Actions runners pinned to ubuntu-24.04 instead of ubuntu-latest, which removes the Ubuntu 26 migration notice and keeps CI on a known image.
+
 ## [1.1.4] - 10-26-2026 at 4:52pm
 
 ### Changed - CI artifacts (10-30-2026 at 9:13am; CI only, no version bump)
